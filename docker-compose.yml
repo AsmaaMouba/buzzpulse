@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_DEBUG: "True"
+      FLASK_APP: "app.py"
+      FLASK_ENV: "development"
+      SECRET_KEY: "buzz_pulse"
+      CSRF_SECRET_KEY: "buzz_pulse"
+      DATABASE_URI: "mysql+mysqlconnector://admin:99q&cUzpOG2%@buzzpulse.ccvv7zf7lno9.eu-west-1.rds.amazonaws.com/buzzpulse"
+      THEME: "Pulse"
+      MAIL_SERVER: "smtp.gmail.com"
+      MAIL_USERNAME: "h.in.q.mailing@gmail.com"
+      MAIL_PASSWORD: "pmhmjesszshvhauh"

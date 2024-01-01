@@ -1,0 +1,95 @@
+{% from 'bootstrap5/utils.html' import render_icon %}
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/buzz.ico') }}" type="image/x-icon">
+  <title>{% block title %}{% endblock %} - BuzzPulse</title>
+  {{ bootstrap.load_css() }}
+  <style>
+     a.btn.btn-outline-light[href="/logout"] {
+      font-size: 25px; 
+      margin-top: 1px;
+    }
+    .navbar {
+      background-color: #ffffff !important; 
+    }
+    .navbar a, .btn {
+      color: #050303 !important;
+    }
+    .navbar .btn {
+      border-color: #FFFFFF !important;
+    }
+    body {
+      background-color: #FFFFFF;
+    }
+    .buzzpulse-text {
+      margin-top: 50px; 
+      font-size:40px; 
+      display: inline-block; 
+    }
+    .navbar-nav .nav-link {
+      font-size: 25px;
+    }
+    .signup-button {
+      font-size: 25px;
+    }
+
+    
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary static-top py-1">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand" href="{{ url_for('accounts.index') }}">
+        <div class="d-flex p-2 rounded-3">
+          <img src="https://www.h-in-q.com/wp-content/uploads/2021/01/H-in-Q-Logo-site-e1611161569325.png" srcset="https://www.h-in-q.com/wp-content/uploads/2021/01/H-in-Q-Logo-site-e1611161569325.png 1x" width="90" height="74" alt="H-in-Q Logo" data-retina_logo_url="" class="fusion-standard-logo" data-pagespeed-url-hash="707002763" onload="pagespeed.CriticalImages.checkImageForCriticality(this);">
+          <span class="text-uppercase m-0 buzzpulse-text">BuzzPulse</span>
+        </div>
+      </a>
+      
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav">
+          {% if current_user.is_authenticated %}
+          {{ render_nav_item('accounts.profile', 'Profile') }}
+          {{ render_nav_item('accounts.campaign', 'Campaign') }}
+          {{ render_nav_item('accounts.change_email', 'Reset Email') }}
+          {{ render_nav_item('accounts.change_password', 'Change Password') }}
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav ms-auto my-2">
+          {{ render_nav_item('accounts.index', 'Home') }}
+          {% if not current_user.is_authenticated %}
+          {{ render_nav_item('accounts.login', 'Login') }}
+          <li class="nav-item my-2 my-md-0 ms-md-2">
+            <a class="btn btn-outline-light signup-button" href="{{ url_for('accounts.register') }}">Signup</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="btn btn-outline-light" href="{{ url_for('accounts.logout') }}">Logout</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% block body %} {% endblock %}
+  {% block scripts %}
+  <!-- Optional JavaScript -->
+  {{ bootstrap.load_js() }}
+  {% endblock %}
+</body>
+
+</html>

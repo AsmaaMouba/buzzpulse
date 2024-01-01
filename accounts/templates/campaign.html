@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/form.html' import render_field %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% block title %}Campaign{% endblock %}
+
+<style>
+    .btn-info, .btn-success {
+        background-color: #72a7d6 !important;
+        color: white !important;
+        border: none !important;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info:hover, .btn-success:hover {
+        background-color: #5a8db1 !important;  
+    }
+</style>
+
+{% block body %}
+<div class="container mt-5">
+{{ render_messages(dismissible=True, dismiss_animate=True) }}
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h1 class="card-title">Your Campaign</h1>
+            <div class="mt-4">
+                <a href="/your_campaigns" class="btn btn-info mb-2"  style="background-color: #72a7d6">YOUR CAMPAIGNS</a>
+                <a href="/start_new_campaign" class="btn btn-success mb-2"  style="background-color: #72a7d6">CREATE NEW CAMPAIGN</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Your Campaigns{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2>Your Campaigns</h2>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Image</th>
+                <th>Campaign Name</th>
+                <th>Brands</th>
+                <th>Platforms</th>
+				<th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for campaign in campaigns %}
+            <tr>
+                <td>
+                    {% if campaign.image_path %}
+                        <img src="{{ url_for('static', filename='assets/profile/' + campaign.image_path) }}" alt="Campaign Logo" width="100">
+                    {% else %}
+                        <!-- Display a default image or some placeholder -->
+                        <img src="{{ url_for('static', filename='assets/profile/default.png') }}" alt="Campaign Logo" width="100">
+                    {% endif %}
+                </td>
+                <td>{{ campaign.campaign_name }}</td>
+                <td>
+                    {% for brand in campaign.brands %}
+                        {{ brand.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ campaign.platforms }}</td>
+				<td>{{ campaign.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

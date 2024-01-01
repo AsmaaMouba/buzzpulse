@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/form.html' import render_field %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% block title %}Change Email Address{% endblock %}
+
+{% block body %}
+<style>
+#submit {
+    background-color: #72a7d6 !important; 
+    color: white !important; 
+  }
+ a.text-decoration-none {
+      color: #04203d !important; 
+    }
+a.btn.btn-outline-light[href="/logout"] {
+      font-size: 25px; 
+      margin-top: 1px;
+    }
+</style>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-5">
+                        <form action="{{ url_for('accounts.change_email') }}" method="post">
+                            <div class="text-center mb-4">
+                                <h2>Change Email Address</h2>
+                                {{ render_messages() }}
+                                <p class="text-muted">To reset your email enter new email address and you will receive a confirmation link to confirm your email.</p>
+                            </div>
+                            {{ form.csrf_token() }}
+                            <div class="mb-3">
+                                {{ render_field(form.email, placeholder="Enter email address", class="form-control-lg") }}
+                            </div>
+                            <div class="mb-3 form-check">
+                                {{ render_field(form.remember, class="form-check-input") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ render_field(form.submit, class='btn btn-primary btn-lg btn-block') }}
+                            </div>
+                        </form>
+                        <div class="text-center">
+                            <a href="{{ url_for('accounts.index') }}" class="text-decoration-none">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,243 @@
+
+{% extends "base.html" %}
+
+{% block title %}Start a New Campaign{% endblock %}
+
+{% block body %}
+
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 600px;
+        margin-top: 5%;
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 30px;
+        font-weight: 600;
+        border-bottom: 2px solid #e6e6e6;
+        padding-bottom: 15px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        background-color: #72a7d6;
+        border: none;
+        transition: background-color 0.3s;
+        margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: #72a7d6;
+    }
+
+    .platform-checkbox {
+        margin-right: 7px;
+    }
+
+    .form-control:focus {
+        border-color: #72a7d6;
+        box-shadow: none;
+    }
+
+    .input-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+    }
+</style>
+
+<div class="container">
+    
+        
+<div class="text-center">
+        <h1>Start a New Campaign</h1>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+		
+        <!-- Hidden Field for Campaign ID (Token) -->
+        <input type="hidden" name="campaign_id" value="{{ token }}">
+
+		<div class="form-group">
+		{{ form.image.label(class="form-label") }}
+		{{ form.image(class="form-control") }}
+		</div>
+
+        <div class="form-group position-relative">
+            {{ form.campaign_name.label }}
+            {{ form.campaign_name(class="form-control") }}
+            <i class="fas fa-bullhorn input-icon"></i>
+        </div>
+
+
+		 <!-- Platforms to Scrape From -->
+      <div class="form-group">
+			{{ form.platforms.label }}
+			<div>
+				{% for value, label in form.platforms.choices %}
+					<label class="mr-3">
+						<input type="checkbox" name="platforms" value="{{ value }}" 
+							   class="platform-checkbox" 
+							   {% if form.platforms.data and value in form.platforms.data %}checked{% endif %}>{{ label }}
+					</label>
+				{% endfor %}
+			</div>
+		</div>
+
+        <!-- Additional Inputs for each Platform -->
+        <div id="platformFieldsContainer"></div>
+		
+		 <div class="form-group position-relative">
+            {{ form.num_brands.label }}
+            {{ form.num_brands(class="form-control") }}
+            <i class="fas fa-tags input-icon"></i>
+        </div>
+
+        <!-- Placeholder for dynamically added brand input fields -->
+        <div id="brandFieldsContainer"></div>
+
+       
+<div class="text-center">
+            <button type="submit" class="btn btn-primary">Start Campaign</button>
+        </div>
+    </form>
+</div>
+
+<script>
+
+function addField(container, labelText, inputName, brandIndex, inputType = 'text') {
+    let label = document.createElement('label');
+    label.textContent = `Brand ${brandIndex} - ${labelText}`;
+    let input = document.createElement('input');
+    input.type = inputType;
+    input.name = inputName;
+    container.appendChild(label);
+    container.appendChild(input);
+    container.appendChild(document.createElement('br'));
+}
+
+
+function addPlatformFieldsForBrand(platform, container, index) {
+	let brandIndex = index + 1;
+    switch (platform) {
+        case 'instagram':
+            addField(container, 'Page/Profile URL(s) for Instagram', `brand${index+1}_instagram_urls`, brandIndex);
+            addField(container, 'Hashtags for Instagram', `brand${index+1}_instagram_hashtags`, brandIndex);
+            break;
+
+        case 'facebook':
+            addField(container, 'Page/Profile URL(s) for Facebook', `brand${index+1}_facebook_urls`, brandIndex);
+            addField(container, 'Hashtags for Facebook', `brand${index+1}_facebook_hashtags`, brandIndex);
+            addField(container, 'Group URLs for Facebook', `brand${index+1}_facebook_groups`, brandIndex);
+            break;
+
+        case 'tiktok':
+            addField(container, 'Page/Profile URL(s) for TikTok', `brand${index+1}_tiktok_urls`, brandIndex);
+            addField(container, 'Hashtags for TikTok', `brand${index+1}_tiktok_hashtags`, brandIndex);
+            addField(container, 'Keywords for TikTok', `brand${index+1}_tiktok_keywords`, brandIndex);
+            break;
+
+        case 'youtube':
+            addField(container, 'Channel URL(s) for YouTube', `brand${index+1}_youtube_urls`, brandIndex);
+            addField(container, 'Hashtags for YouTube', `brand${index+1}_youtube_hashtags`, brandIndex);
+            addField(container, 'Search terms for YouTube', `brand${index+1}_youtube_searchterms`, brandIndex);
+            break;
+
+        case 'twitter':
+            addField(container, 'Profiles for Twitter', `brand${index+1}_twitter_profiles`, brandIndex);
+            addField(container, 'Keywords for Twitter', `brand${index+1}_twitter_keywords`, brandIndex);
+            addField(container, 'Country for Twitter', `brand${index+1}_twitter_country`, brandIndex);
+            addField(container, 'Start Date for Twitter', `brand${index+1}_twitter_start_date`, 'date', brandIndex);
+            addField(container, 'End Date for Twitter', `brand${index+1}_twitter_end_date`, 'date', brandIndex);
+            addField(container, 'Language for Twitter', `brand${index+1}_twitter_language`, brandIndex);
+            break;
+
+        case 'website':
+            addField(container, 'Website URL(s)', `brand${index+1}_website_urls`, brandIndex);
+            break;
+
+        default:
+            console.error("Unrecognized platform: ", platform);
+    }
+}
+
+
+document.querySelector('input[name="num_brands"]').addEventListener('change', function(e) {
+    let brandFieldsContainer = document.getElementById('brandFieldsContainer');
+    brandFieldsContainer.innerHTML = '';
+    let numBrands = parseInt(e.target.value) || 0;
+
+    for (let i = 0; i < numBrands; i++) {
+        let brandSection = document.createElement('div');
+        brandSection.className = 'brand-section';
+
+        // Add brand input field
+        let brandInput = document.createElement('input');
+        brandInput.type = 'text';
+        brandInput.name = `brand${i+1}_name`;
+        brandInput.placeholder = 'Brand ' + (i + 1);
+        brandSection.appendChild(brandInput);
+        brandSection.appendChild(document.createElement('br'));
+
+        let platformFieldsContainer = document.createElement('div');
+        platformFieldsContainer.className = 'platform-fields-container';
+        brandSection.appendChild(platformFieldsContainer);
+        brandFieldsContainer.appendChild(brandSection);
+
+        // Populate fields for platforms that are already checked
+        document.querySelectorAll('.platform-checkbox:checked').forEach(function(checkbox) {
+            addPlatformFieldsForBrand(checkbox.value, platformFieldsContainer, i);
+        });
+    }
+});
+
+document.querySelectorAll('.platform-checkbox').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function(e) {
+        document.querySelectorAll('.brand-section').forEach(function(brandSection, index) {
+            let platformFieldsContainer = brandSection.querySelector('.platform-fields-container');
+            let platform = e.target.value;
+            let fieldPrefix = `brand${index+1}_${platform}`;
+
+            if (!e.target.checked) {
+                // Remove fields related to this platform for the current brand
+                let existingFields = platformFieldsContainer.querySelectorAll(`[name^="${fieldPrefix}"]`);
+                existingFields.forEach(field => {
+                    field.previousSibling.remove(); // Remove the label
+                    field.nextSibling && field.nextSibling.remove(); // Remove the <br> if exists
+                    field.remove();
+                });
+            } else {
+                // Check if fields already exist. If not, add them.
+                let existingFields = platformFieldsContainer.querySelectorAll(`[name^="${fieldPrefix}"]`);
+                if (existingFields.length === 0) {
+                    addPlatformFieldsForBrand(platform, platformFieldsContainer, index);
+                }
+            }
+        });
+    });
+});
+
+
+
+
+</script>
+
+{% endblock %}
