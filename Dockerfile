@@ -31,5 +31,5 @@ ENV MAIL_PASSWORD=pmhmjesszshvhauh
 
 # Run app.py when the container launches
 CMD ["flask", "run"]
-HEALTHCHECK CMD curl --fail http://localhost:5000/ || exit 1
+HEALTHCHECK CMD curl --fail http://107.20.76.217:8080/ || exit 1
 
